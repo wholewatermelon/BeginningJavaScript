@@ -7,12 +7,32 @@ function component(width, height, x, y, imageSrc) {
   this.height = height;
   this.x = x;
   this.y = y;
-  this.componentImage = new Image();
-  this.componentImage.src = imageSrc;
-
+  if (imageSrc != undefined) {
+    this.componentImage = new Image();
+    this.componentImage.src = imageSrc;
+  }
   this.newPos = function() {
     this.x += this.speedX;
     this.y += this.speedY;
+  }
+
+  this.crashWith = function(obstacle) {
+    var myleft = this.x;
+    var myright = this.x + (this.width);
+    var mytop = this.y;
+    var mybottom = this.y + (this.height);
+    var otherleft = obstacle.x;
+    var othertop = obstacle.y;
+    var otherright = obstacle.x + obstacle.width;
+    var otherbottom = obstacle.y + obstacle.height;
+    var crash = true;
+    if ((mybottom < othertop) ||
+      (mytop > otherbottom) ||
+      (myright < otherleft) ||
+      (myleft > otherright)) {
+      crash = false;
+    }
+    return crash;
   }
 }
 
@@ -30,6 +50,7 @@ var myGameArea = {
   background: new Image(),
   backgroundX: 0,
   keys: [],
+  obstacle: new component(20, 100, 120, 0),
 
   start: function() {
     this.canvas.width = this.canvasWidth;
@@ -53,7 +74,11 @@ var myGameArea = {
   },
   drawObstacles: function() {
     this.context.fillStyle = "black";
-    this.context.fillRect(120, 0, 20, 100)
+    this.obstacle.x -= 1;
+    this.context.fillRect(this.obstacle.x, this.obstacle.y, this.obstacle.width, this.obstacle.height);
+    if (this.component.crashWith(this.obstacle)) {
+      this.stop();
+    }
   },
   clear: function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
