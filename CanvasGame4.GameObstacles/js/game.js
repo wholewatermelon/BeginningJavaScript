@@ -51,6 +51,10 @@ var myGameArea = {
     component = this.component;
     this.background.src = "images/beach.jpg";
   },
+  drawObstacles: function() {
+    this.context.fillStyle = "black";
+    this.context.fillRect(120, 0, 20, 100)
+  },
   clear: function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
@@ -80,6 +84,7 @@ var myGameArea = {
     this.context.drawImage(this.background, this.backgroundX, 0, this.canvasWidth, this.canvasHeight);
     this.context.drawImage(this.background, (this.backgroundX + this.canvasWidth), 0, this.canvasWidth, this.canvasHeight);
     this.context.drawImage(component.componentImage, component.x, component.y, component.width, component.height);
+    this.drawObstacles();
   },
   drawBorder: function() {
     myGameArea.context.rect(0, 0, myGameArea.canvasWidth, myGameArea.canvasHeight);
