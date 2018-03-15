@@ -11,9 +11,9 @@ function component(width, height, x, y, imageSrc) {
   this.componentImage.src = imageSrc;
 
   this.newPos = function() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-    }
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
 }
 
 function updateGameArea() {
@@ -39,11 +39,11 @@ var myGameArea = {
     document.body.appendChild(this.canvas);
     this.interval = setInterval(updateGameArea, 20);
     keys = this.keys;
-    window.addEventListener('keydown', function (e) {
-            this.keys[e.keyCode] = (e.type == "keydown");
+    window.addEventListener('keydown', function(e) {
+      this.keys[e.keyCode] = (e.type == "keydown");
     })
-    window.addEventListener('keyup', function (e) {
-            this.keys[e.keyCode] = (e.type == "keydown");
+    window.addEventListener('keyup', function(e) {
+      this.keys[e.keyCode] = (e.type == "keydown");
     })
   },
   setBackgroundImage: function() {
@@ -54,13 +54,21 @@ var myGameArea = {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
   update: function() {
-        this.component.speedX = 0;
-        this.component.speedY = 0;
-        if (this.keys && this.keys[37]) {this.component.speedX = -1; }
-        if (this.keys && this.keys[39]) {this.component.speedX = 1; }
-        if (this.keys && this.keys[38]) {this.component.speedY = -1; }
-        if (this.keys && this.keys[40]) {this.component.speedY = 1; }
-        this.component.newPos();
+    this.component.speedX = 0;
+    this.component.speedY = 0;
+    if (this.keys && this.keys[37]) {
+      this.component.speedX = -1;
+    }
+    if (this.keys && this.keys[39]) {
+      this.component.speedX = 1;
+    }
+    if (this.keys && this.keys[38]) {
+      this.component.speedY = -1;
+    }
+    if (this.keys && this.keys[40]) {
+      this.component.speedY = 1;
+    }
+    this.component.newPos();
 
     this.context.drawImage(this.background, 0, 0, myGameArea.canvasWidth, myGameArea.canvasHeight);
     this.context.drawImage(component.componentImage, component.x, component.y, component.width, component.height);
