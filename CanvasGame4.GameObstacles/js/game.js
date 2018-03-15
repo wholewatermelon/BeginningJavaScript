@@ -28,6 +28,7 @@ var myGameArea = {
   canvasWidth: 480,
   canvasHeight: 270,
   background: new Image(),
+  backgroundX: 0,
   keys: [],
 
   start: function() {
@@ -68,9 +69,16 @@ var myGameArea = {
     if (this.keys && this.keys[40]) {
       this.component.speedY = 1;
     }
+
+    this.backgroundX -= 1;
+    if (this.backgroundX <= 0 - this.canvasWidth) {
+      this.backgroundX = 0;
+    }
+
     this.component.newPos();
 
-    this.context.drawImage(this.background, 0, 0, myGameArea.canvasWidth, myGameArea.canvasHeight);
+    this.context.drawImage(this.background, this.backgroundX, 0, this.canvasWidth, this.canvasHeight);
+    this.context.drawImage(this.background, (this.backgroundX + this.canvasWidth), 0, this.canvasWidth, this.canvasHeight);
     this.context.drawImage(component.componentImage, component.x, component.y, component.width, component.height);
   },
   drawBorder: function() {
