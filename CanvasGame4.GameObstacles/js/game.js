@@ -58,7 +58,11 @@ var myGameArea = {
   clear: function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
-  update: function() {
+  stop: function() {
+    clearInterval(this.interval);
+  },
+
+  moveComponent: function() {
     this.component.speedX = 0;
     this.component.speedY = 0;
     if (this.keys && this.keys[37]) {
@@ -73,18 +77,24 @@ var myGameArea = {
     if (this.keys && this.keys[40]) {
       this.component.speedY = 1;
     }
+    this.component.newPos();
+  },
 
+  moveBackground: function() {
     this.backgroundX -= 1;
     if (this.backgroundX <= 0 - this.canvasWidth) {
       this.backgroundX = 0;
     }
+  },
 
-    this.component.newPos();
-
+  update: function() {
+    this.moveComponent();
+    this.moveBackground();
     this.context.drawImage(this.background, this.backgroundX, 0, this.canvasWidth, this.canvasHeight);
     this.context.drawImage(this.background, (this.backgroundX + this.canvasWidth), 0, this.canvasWidth, this.canvasHeight);
     this.context.drawImage(component.componentImage, component.x, component.y, component.width, component.height);
     this.drawObstacles();
+
   },
   drawBorder: function() {
     myGameArea.context.rect(0, 0, myGameArea.canvasWidth, myGameArea.canvasHeight);
