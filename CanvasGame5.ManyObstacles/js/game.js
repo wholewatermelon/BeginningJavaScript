@@ -41,21 +41,29 @@ function updateGameArea() {
   myGameArea.update();
 }
 
+function everyinterval(n) {
+  if ((myGameArea.frameNo / n) % 1 == 0) {
+    return true;
+  }
+  return false;
+}
+
 var myGameArea = {
   canvas: document.createElement("canvas"),
-  component: new component(50, 50, 10, 120, "images/bird.png"),
+  hero: new component(50, 50, 10, 120, "images/bird.png"),
   context: null,
   canvasWidth: 480,
   canvasHeight: 270,
   background: new Image(),
   backgroundX: 0,
   keys: [],
-  obstacle: new component(20, 100, 120, 0),
+  obstacles: [],
 
   start: function() {
     this.canvas.width = this.canvasWidth;
     this.canvas.height = this.canvasHeight;
     this.context = this.canvas.getContext("2d");
+    this.frameNo = 0;
     this.drawBorder();
     this.setBackgroundImage();
     document.body.appendChild(this.canvas);
@@ -69,15 +77,39 @@ var myGameArea = {
     })
   },
   setBackgroundImage: function() {
-    component = this.component;
+
     this.background.src = "images/beach.jpg";
   },
+
   drawObstacles: function() {
-    this.context.fillStyle = "black";
-    this.obstacle.x -= 1;
-    this.context.fillRect(this.obstacle.x, this.obstacle.y, this.obstacle.width, this.obstacle.height);
-    if (this.component.crashWith(this.obstacle)) {
-      this.stop();
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+      x = this.canvasWidth;
+      y = this.canvasHeight - 200;
+
+      let minHeight = 20;
+      let maxHeight = 200;
+      let height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+      let minGap = 70;
+      let maxGap = 200;
+      let gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
+      this.obstacles.push(new component(10, height, x, 0));
+      this.obstacles.push(new component(10, x - height - gap, x, height + gap));
+
+    }
+    for (i = 0; i < this.obstacles.length; i += 1) {
+      let obstacle = this.obstacles[i];
+      obstacle.x -= 1;
+
+      this.context.fillStyle = "black";
+      this.context.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+      if (this.hero.crashWith(obstacle)) {
+        this.stop();
+      }
+    }
+    if (this.obstacles[0].x < 0) {
+      this.obstacles.splice(0, 1);
     }
   },
   clear: function() {
@@ -87,22 +119,22 @@ var myGameArea = {
     clearInterval(this.interval);
   },
 
-  moveComponent: function() {
-    this.component.speedX = 0;
-    this.component.speedY = 0;
+  moveHero: function() {
+    this.hero.speedX = 0;
+    this.hero.speedY = 0;
     if (this.keys && this.keys[37]) {
-      this.component.speedX = -1;
+      this.hero.speedX = -1;
     }
     if (this.keys && this.keys[39]) {
-      this.component.speedX = 1;
+      this.hero.speedX = 1;
     }
     if (this.keys && this.keys[38]) {
-      this.component.speedY = -1;
+      this.hero.speedY = -1;
     }
     if (this.keys && this.keys[40]) {
-      this.component.speedY = 1;
+      this.hero.speedY = 1;
     }
-    this.component.newPos();
+    this.hero.newPos();
   },
 
   moveBackground: function() {
@@ -113,13 +145,12 @@ var myGameArea = {
   },
 
   update: function() {
-    this.moveComponent();
+    this.moveHero();
     this.moveBackground();
     this.context.drawImage(this.background, this.backgroundX, 0, this.canvasWidth, this.canvasHeight);
     this.context.drawImage(this.background, (this.backgroundX + this.canvasWidth), 0, this.canvasWidth, this.canvasHeight);
-    this.context.drawImage(component.componentImage, component.x, component.y, component.width, component.height);
+    this.context.drawImage(this.hero.componentImage, this.hero.x, this.hero.y, this.hero.width, this.hero.height);
     this.drawObstacles();
-
   },
   drawBorder: function() {
     myGameArea.context.rect(0, 0, myGameArea.canvasWidth, myGameArea.canvasHeight);
